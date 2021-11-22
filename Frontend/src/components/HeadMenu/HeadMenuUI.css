@@ -1,0 +1,17 @@
+@media screen and (max-width: 500px) {
+  .ant-layout-header{
+    padding: 0 10px;
+  }
+}
+
+@media screen and (max-width: 300px) {
+  #titleLogo {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 240px) {
+  #titleText {
+    display: none;
+  }
+}

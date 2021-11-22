@@ -1,0 +1,49 @@
+#LoginCard {
+    margin: 0;
+    position: absolute;
+}
+
+#CardTabs {
+    margin: 0 auto;
+}
+
+@media screen and (min-width: 521px) {
+    #LoginCard {
+        width: 400px;
+        top: 48%;
+        right: 10%;
+        transform: translate(0%, -50%);
+    }
+
+    #CardTabs {
+        width: 300px
+    }
+}
+
+@media screen and (max-width: 520px) {
+    #LoginCard {
+        width: 320px;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -45%);
+    }
+
+    #CardTabs {
+        width: 280px
+    }
+}
+
+@media screen and (max-width: 320px) {
+    #LoginCard {
+        width: 300px;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -45%);
+    }
+
+    #CardTabs {
+        width: 270px
+    }
+}
+
+

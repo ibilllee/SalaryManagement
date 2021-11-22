@@ -1,0 +1,12 @@
+@media screen and (max-width: 800px) {
+  .SearchNotice {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 330px) {
+  .CheckButtonIcon {
+    visibility:hidden;
+    width: 0px;
+  }
+}
