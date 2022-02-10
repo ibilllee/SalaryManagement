@@ -211,11 +211,11 @@ class SalaryTable extends Component {
         })
       columns.push(
         {
-          title: "日期",
+          title: "日期-项目",
           key: "date",
           dataIndex: "date",
           align: "center",
-          ...this.getColumnSearchProps('date', '日期'),
+          ...this.getColumnSearchProps('date', '日期-项目'),
           render: (date, item) => {
             let color = "geekblue";
             if (item.modalTableType === NORMAL_SALARY) {

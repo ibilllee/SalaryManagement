@@ -1,12 +1,16 @@
 package com.xy.salarymanage.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.xy.salarymanage.config.Constant;
 import com.xy.salarymanage.dto.Environment;
 import com.xy.salarymanage.entity.User;
+import com.xy.salarymanage.entity.UserWx;
 import com.xy.salarymanage.exception.PasswordInvalidException;
 import com.xy.salarymanage.exception.RegisterException;
+import com.xy.salarymanage.exception.WxAuthException;
 import com.xy.salarymanage.mapper.RedisRepository;
 import com.xy.salarymanage.mapper.UserMapper;
+import com.xy.salarymanage.mapper.UserWxMapper;
 import com.xy.salarymanage.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +32,12 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
+    private UserWxMapper userWxMapper;
+    @Autowired
     private RiskService riskService;
 
 
-    public Map<String, Object> loginUser(String username, String password, HttpSession request, Environment environment) throws UnsupportedEncodingException, NoSuchAlgorithmException, PasswordInvalidException {
+    public Map<String, Object> loginUser(String username, String password, HttpSession session, Environment environment) throws UnsupportedEncodingException, NoSuchAlgorithmException, PasswordInvalidException {
         String encodedPassword = MD5Utils.encodeByMd5(password);
         User user=userMapper.selectUserByUsernameAndPassword(username, encodedPassword);
         if ( user== null) {
@@ -41,13 +47,47 @@ public class UserService {
             String sessionId = UUID.randomUUID().toString();// generateSessionId();
             redisRepository.put(Constant.REDIS_SESSION_ID, sessionId, username, Constant.LOGIN_KEEP_TIME, TimeUnit.MINUTES);
             redisRepository.put(Constant.REDIS_SESSION_TYPE, sessionId, USER_TYPE, Constant.LOGIN_KEEP_TIME, TimeUnit.MINUTES);
-            request.setAttribute(Constant.HTTP_SESSION_ID, sessionId);
+            session.setAttribute(Constant.HTTP_SESSION_ID, sessionId);
             return new HashMap<String, Object>() {{
                 put("expireTime", Constant.LOGIN_KEEP_TIME);
                 put("decisionType", 0);
                 put("name",user.getName());
             }};
         }
+    }
+
+    public Map<String,Object> loginUserByWx(String wxId) throws WxAuthException {
+        QueryWrapper<UserWx> userWxQueryWrapper = new QueryWrapper<>();
+        userWxQueryWrapper.eq("wx_id",wxId);
+        UserWx userWx = userWxMapper.selectOne(userWxQueryWrapper);
+        if(userWx==null) throw new WxAuthException("userWx Not Found(1)");
+        User user = userMapper.selectByUsername(userWx.getUsername());
+        if (user==null) throw new WxAuthException("user Not Found(2)");
+        String sessionId = UUID.randomUUID().toString();// generateSessionId();
+        redisRepository.put(Constant.REDIS_SESSION_ID, sessionId, userWx.getUsername(), Constant.LOGIN_KEEP_TIME, TimeUnit.MINUTES);
+        redisRepository.put(Constant.REDIS_SESSION_TYPE, sessionId, USER_TYPE, Constant.LOGIN_KEEP_TIME, TimeUnit.MINUTES);
+        return new HashMap<String, Object>() {{
+            put("expireTime", Constant.LOGIN_KEEP_TIME);
+            put("decisionType", 0);
+            put("name",user.getName());
+            put("sessionId",sessionId);
+        }};
+    }
+
+    public HashMap<String,Object> checkUserLoginByWx(String wxId, String sessionId, HttpSession session) throws WxAuthException {
+        QueryWrapper<UserWx> userWxQueryWrapper = new QueryWrapper<>();
+        userWxQueryWrapper.eq("wx_id",wxId);
+        UserWx userWx = userWxMapper.selectOne(userWxQueryWrapper);
+        if(userWx==null) throw new WxAuthException("userWx Not Found(1)");
+        User user = userMapper.selectByUsername(userWx.getUsername());
+        if (user==null) throw new WxAuthException("user Not Found(2)");
+        session.setAttribute(Constant.HTTP_SESSION_ID, sessionId);
+        return new HashMap<String, Object>() {{
+            put("expireTime", Constant.LOGIN_KEEP_TIME);
+            put("decisionType", 0);
+            put("name",user.getName());
+            put("username",user.getUsername());
+        }};
     }
 
     public boolean logoutUser(HttpSession session) {

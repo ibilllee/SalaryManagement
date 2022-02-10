@@ -8,10 +8,12 @@ import com.xy.salarymanage.service.RiskService;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 
 import java.lang.reflect.Method;
+
 
 public class CaptchaVerifyInterceptor implements MethodInterceptor {
     @Autowired

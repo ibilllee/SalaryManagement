@@ -47,11 +47,11 @@ const LoginPageUI = (props) => {
               content: (
                 <div>
                   <Timeline style={{marginTop:'30px',marginBottom:'-50px',marginLeft:'-30px'}}>
-                    <Timeline.Item>使用旧版系统用户名与密码即可登录新系统</Timeline.Item>
+                    <Timeline.Item>使用微信(关注企业号->工资查询)/企业微信(工作台->工资查询)中工资查询应用进入，可<b>免密登录</b></Timeline.Item>
                     <Timeline.Item>请在登录后及时点击退出登录以保证数据与隐私安全</Timeline.Item>
                     <Timeline.Item>若忘记密码，请联系管理员</Timeline.Item>
                   </Timeline>
-                  <div style={{marginTop:'20px',textAlign:'right'}}>系统版本号：V1.0.1</div>
+                  <div style={{marginTop:'20px',textAlign:'right'}}>系统版本号：V1.1.0</div>
                 </div>
               ),
               okText:"关闭"

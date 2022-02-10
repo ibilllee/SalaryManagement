@@ -17,7 +17,6 @@ class MainPage extends Component {
 
   componentDidMount() {
     this.setState({isAdmin: sessionStorage.getItem(SESSION_USER_TYPE) === ADMIN});
-
   }
 
 

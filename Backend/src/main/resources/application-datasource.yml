@@ -3,4 +3,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql:///salary_manage?useUnicode=true&characterEncoding=utf8
     username: root
-    password: 12345678
+    password: Lyx2001719?
+  redis:
+    password: Lyx2001719?

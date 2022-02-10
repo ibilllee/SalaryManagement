@@ -10,7 +10,7 @@ import {
   SHOULD_DEDUCT_TEXT,
   SHOULD_PAID_TEXT, UPLOAD_SALARY_MESSAGE_KEY
 } from "../../constant";
-import {message} from "antd";
+import {message, Modal} from "antd";
 import * as XLSX from "xlsx";
 import {clearSalaryList, setPagination, setSalaryList} from "../../redux/actions/SalaryTableAction";
 import Query from "../../api/query";
@@ -51,6 +51,8 @@ class CheckInPage extends Component {
       data[0][i] = data[0][i].replace(/\s*/g, "");
     }
     let salaryList = []
+
+    let emptyMsg = [];
     if (type === MONTHLY_SALARY) {
       const shouldPaidIndex = data[0].indexOf(SHOULD_PAID_TEXT);
       const shouldDeductIndex = data[0].indexOf(SHOULD_DEDUCT_TEXT);
@@ -70,6 +72,7 @@ class CheckInPage extends Component {
         message.error("“" + REAL_PAID_TEXT + "”字段未找到", 10);
         return null;
       }
+
 
       //生成工资表
       for (let i = 1; i <= number; i++) {
@@ -100,9 +103,11 @@ class CheckInPage extends Component {
             deduct: j >= shouldDeductItemNumber ? "" : data[0][shouldPaidIndex + j],
             deductPrice: j >= shouldDeductItemNumber ? "" : data[i][shouldPaidIndex + j],
           }
-          if (salaryDetailItem.paid !== undefined && salaryDetailItem.paidPrice !== undefined
-            && salaryDetailItem.deduct !== undefined && salaryDetailItem.deductPrice !== undefined)
-            salaryDetail.push(salaryDetailItem)
+          salaryDetail.push(salaryDetailItem);
+          if (salaryDetailItem.paid === undefined || salaryDetailItem.paidPrice === undefined
+            || salaryDetailItem.deduct === undefined || salaryDetailItem.deductPrice === undefined) {
+            emptyMsg.push({i, j});// += "第" + i + "条数据，详细工资中的第" + j + "行";
+          }
         }
         salaryListItem['salaryDetail'] = salaryDetail;
         salaryList.push(salaryListItem);
@@ -127,8 +132,9 @@ class CheckInPage extends Component {
             title: data[0][MAX_FIXED_INDEX + j],
             content: data[i][MAX_FIXED_INDEX + j],
           }
-          if (salaryDetailItem.title !== undefined && salaryDetailItem.content !== undefined)
-            salaryDetail.push(salaryDetailItem)
+          salaryDetail.push(salaryDetailItem);
+          if (salaryDetailItem.title === undefined || salaryDetailItem.content === undefined)
+            emptyMsg.push({i, j});
         }
         salaryListItem['salaryDetail'] = salaryDetail;
         salaryList.push(salaryListItem);
@@ -136,6 +142,22 @@ class CheckInPage extends Component {
     }
     this.props.setSalaryList(salaryList);
     this.props.setPagination({current: 1, pageSize: 10, total: salaryList.length})
+
+    if (emptyMsg.length !== 0) {
+      Modal.warning({
+        title: '提示：存在空白单元格',
+        content: (<div>
+          {
+            emptyMsg.map((value) => (
+              <div>第{value.i}条数据，详细工资中的第{value.j}行</div>
+            ))
+          }
+        </div>),
+        okText: "知道了"
+
+      });
+    }
+
   }
 
   readExcel = (file, type = NORMAL_SALARY) => {
@@ -222,12 +244,12 @@ class CheckInPage extends Component {
     this.setState({current: this.state.current - 1});
   };
 
-  setTheState=(newState)=> {
+  setTheState = (newState) => {
     this.setState(newState);
   }
 
-  chooseSalaryType=(salaryType)=>{
-    this.setState({modalTableType:salaryType});
+  chooseSalaryType = (salaryType) => {
+    this.setState({modalTableType: salaryType});
     this.setState({current: this.state.current + 1});
     this.setState({uploadFile: {}})
   }

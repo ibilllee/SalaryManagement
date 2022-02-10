@@ -12,6 +12,14 @@ CREATE TABLE user
     password VARCHAR(255) NOT NULL
 );
 
+DROP TABLE IF EXISTS user_wx;
+CREATE TABLE user_wx
+(
+    id       INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(255) NOT NULL UNIQUE ,
+    wx_id    VARCHAR(255) NOT NULL UNIQUE
+);
+
 DROP TABLE IF EXISTS admin;
 CREATE TABLE admin
 (
@@ -32,3 +40,4 @@ CREATE TABLE salary
     salary_detail   TEXT
 );
 CREATE INDEX usernameIndex USING HASH ON salary(username);
+

@@ -80,9 +80,6 @@ const LoginFormUI = (props) => {
         <Form.Item style={{textAlign: 'center',marginTop:'30px'}}>
           <Button type="primary" htmlType="submit" size="large">登录</Button>
         </Form.Item>
-        <Form.Item style={{textAlign: 'center',marginTop:'30px'}}>
-          <Button type="link"><a href="http://8.135.61.132/salary">进入旧版系统</a></Button>
-        </Form.Item>
       </Form>
     </div>
   );

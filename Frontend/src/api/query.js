@@ -2,8 +2,10 @@ import axios from "axios";
 import qs from "qs";
 import { USER} from "../constant";
 
-export const BE_BASE_URL = "http://localhost:8080";
-export const FE_BASE_URL = "http://localhost:3000"
+// export const BE_BASE_URL = "http://localhost:8080";
+export const BE_BASE_URL = "http://8.135.61.132:8080/SalaryManagement";
+export const FE_BASE_URL = "http://8.135.61.132/gongzi"
+// export const FE_BASE_URL = "http://localhost:3000"
 
 function generateUrl(url) {
   return BE_BASE_URL + url;
@@ -13,6 +15,8 @@ const Url = {
   fetchCaptcha: generateUrl("/captcha"),
   isNeedCaptcha: generateUrl("/captcha/need"),
   userLogin: generateUrl("/user/login"),
+  userLoginByWx: "http://bill.cab:8080/wxbe/qyweixin/entry",
+  checkUserLoginByWx: generateUrl("/user/checkLoginByWx"),
   userLogout: generateUrl("/user/logout"),
   userUpdate: generateUrl("/user/update"),
   adminLogin: generateUrl("/admin/login"),
@@ -32,6 +36,19 @@ const Query = {
   login: (data, userType) => {
     return axios({
       url: userType === USER ? Url.userLogin : Url.adminLogin,
+      method: 'post',
+      data: qs.stringify(data),
+    })
+  },
+  loginByWx:()=>{
+    return axios({
+      url:Url.userLoginByWx,
+      method:'get',
+    })
+  },
+  checkLoginByWx: (data) => {
+    return axios({
+      url: Url.checkUserLoginByWx,
       method: 'post',
       data: qs.stringify(data),
     })

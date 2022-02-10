@@ -3,7 +3,7 @@ import {Component} from "react";
 import LoginPageUI from "./LoginPageUI";
 import {message, notification} from "antd";
 import {saveCaptchaToken, setCaptchaImg, setNeedCaptcha} from "../../redux/actions/LoginAction";
-import {getDeviceId, getIp} from "../../utils/EnvironmentTools";
+import {getDeviceId, getIp, isWeixn} from "../../utils/EnvironmentTools";
 import {HTTPCode} from "../../constant";
 import Query from "../../api/query";
 
@@ -11,11 +11,17 @@ class LoginPage extends Component {
 
   componentDidMount() {
     this.askNeedCaptcha();
-    notification["info"]({
-      message: '新版系统已上线！',
-      description: (<span>使用<span style={{fontWeight:'bold',color:'#448EF7'}}>原用户名与密码</span>即可登录</span>),
-      duration:5,
-    });
+    if(isWeixn()){
+      message.success({content: "启用微信快捷登录"});
+      this.loginByWx();
+    }else {
+      notification['success']({
+        message: '免密登录提示',
+        duration: '10',
+        description:
+        <div>通过微信/企业微信中<b>工资查询</b>应用进入，可免密码登录系统</div>
+      });
+    }
   }
 
   askNeedCaptcha = () => {
@@ -55,6 +61,10 @@ class LoginPage extends Component {
     }).catch(res => {
       console.log("获取验证码失败", res);
     })
+  }
+
+  loginByWx = () => {
+    window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wwa989392593543c96&redirect_uri=http%3A%2F%2Fbill.cab%3A8080%2Fwxbe%2Fqyweixin%2Foauth%3Furl%3Dhttp%3A%2F%2Fbill.cab%3A8080%2Fwxbe%2Fqyweixin%2Fhome%3FuserId%3DUSERID&response_type=code&scope=SCOPE&agentid=AGENTID&state=STATE#wechat_redirect";
   }
 
   render() {
